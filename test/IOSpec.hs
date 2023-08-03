@@ -6,23 +6,33 @@ module IOSpec
     ) where
 
 import           Control.Concurrent               (threadDelay)
-import           Control.Concurrent.Async
-import           Control.Exception                hiding (assert)
-import           Data.IORef
+import           Control.Concurrent.Async         (async, waitEitherCatch)
+import           Control.Exception                (Exception (toException),
+                                                   SomeException)
+import           Data.IORef                       (modifyIORef, newIORef,
+                                                   readIORef)
 import           Data.List                        (permutations)
 import           Data.Map.Strict                  (Map)
 import qualified Data.Map.Strict                  as M
 import           Data.Set                         (Set)
 import qualified Data.Set                         as S
 import           Data.Time.Clock                  (DiffTime)
-import           Statistics.Distribution
+import           Statistics.Distribution          (DiscreteDistr (probability))
 import           Statistics.Distribution.Binomial (binomial)
-import           System.Process
-import           Test.Hspec
-import           Test.QuickCheck                  hiding (shuffle)
-import           Test.QuickCheck.Monadic
+import           System.Process                   (readProcess)
+import           Test.Hspec                       (Expectation, Spec, describe,
+                                                   it, shouldReturn)
+import           Test.QuickCheck                  (Arbitrary (..), Property,
+                                                   Testable (property),
+                                                   chooseInt, oneof, resize,
+                                                   sized)
+import           Test.QuickCheck.Monadic          (PropertyM, assert, monadicIO,
+                                                   run)
 
-import           IO
+import           IO                               (Dice (..), dice, diceRange,
+                                                   dnsTest, httpTest, httpTest',
+                                                   replicateM, shuffle, twoDice,
+                                                   wc)
 
 spec :: Spec
 spec = do
@@ -98,7 +108,7 @@ testReplicateM :: Int -> Expectation
 testReplicateM n = go `shouldReturn` Right [1 .. n]
   where
     go :: IO (Either String [Int])
-    go = fmap (either (Left . show) (Right . id)) $ withTimeout 5 $ do
+    go = fmap (either (Left . show) Right) $ withTimeout 5 $ do
         ref <- newIORef 0
         replicateM n $ do
             modifyIORef ref succ

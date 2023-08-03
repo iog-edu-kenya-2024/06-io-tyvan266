@@ -4,13 +4,13 @@ module IO where
 -- We once again hide functions we're going to reimplement.
 -- However, some of the exercises may require you to add
 -- additional imports.
-import Prelude hiding (readLn)
-import Control.Monad (liftM)
-import Data.Char
-import Data.IP
-import Network       (HostName, PortID)
-import Network.DNS
-import System.IO
+import           Control.Monad      (liftM)
+import           Data.Char
+import           Data.IP
+import           Network.DNS
+import           Network.Simple.TCP (HostName, ServiceName)
+import           Prelude            hiding (readLn)
+import           System.IO
 
 -- Task IO-1.
 --
@@ -313,7 +313,7 @@ hGetLines h = do
 --
 -- Then rewrite 'httpTest' to use 'withConnection'.
 
-withConnection :: HostName -> PortID -> (Handle -> IO r) -> IO r
+withConnection :: HostName -> ServiceName -> (Handle -> IO r) -> IO r
 withConnection = error "TODO: implement withConnection"
 
 httpTest' :: IO [String]

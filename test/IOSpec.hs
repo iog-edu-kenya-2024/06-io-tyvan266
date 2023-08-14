@@ -30,7 +30,6 @@ import           Test.QuickCheck.Monadic          (PropertyM, assert, monadicIO,
                                                    run)
 
 import           IO                               (Dice (..), dice, diceRange,
-                                                   dnsTest, httpTest, httpTest',
                                                    replicateM, shuffle, twoDice,
                                                    wc)
 
@@ -62,12 +61,6 @@ spec = do
         it "produces all permutations of a list with three elements" $ prop_shuffle 3 10000
         it "produces all permutations of a list with five elements" $ prop_shuffle 5 10000
         it "produces all permutations of an empty list" $ prop_shuffle 0 10
-    describe "httpTest" $
-        it "should return an HTTP 200" $ testHttp httpTest
-    describe "httpTest'" $
-        it "should return an HTTP 200" $ testHttp httpTest'
-    describe "dnsTest" $
-        it "should return at least one IP address" testDns
 
 newtype Timeout = Timeout DiffTime deriving Show
 
@@ -244,12 +237,3 @@ prop_shuffle m n = monadicIO $ do
             let s' = S.delete xs s
             if S.null s' then return True
                          else go s' $ pred i
-
-testHttp :: IO [String] -> Expectation
-testHttp a = head <$> a `shouldReturn` "HTTP/1.1 200 OK\r"
-
-testDns :: Expectation
-testDns = go `shouldReturn` Right True
-  where
-    go :: IO (Either String Bool)
-    go = either (Left . show) (Right . not . null) <$> dnsTest

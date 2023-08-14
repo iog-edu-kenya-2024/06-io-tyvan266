@@ -15,9 +15,6 @@ library
   exposed-modules:     IO
   build-depends:       bytestring
                      , containers
-                     , dns 
-                     , iproute
-                     , network-simple
                      , random
 
 test-suite io-tests

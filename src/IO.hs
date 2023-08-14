@@ -4,12 +4,9 @@ module IO where
 -- We once again hide functions we're going to reimplement.
 -- However, some of the exercises may require you to add
 -- additional imports.
-import           Control.Monad      (liftM)
+import           Control.Monad (liftM)
 import           Data.Char
-import           Data.IP
-import           Network.DNS
-import           Network.Simple.TCP (HostName, ServiceName)
-import           Prelude            hiding (readLn)
+import           Prelude       hiding (readLn)
 import           System.IO
 
 -- Task IO-1.
@@ -262,81 +259,3 @@ allCards = [ Card cn s | cn <- [minBound ..], s <- [minBound ..] ]
 
 shuffle :: [a] -> IO [a]
 shuffle = error "TODO: define shuffle"
-
--- Task IO-12.
---
--- Look at the 'Network' module from the 'network' package.
--- You can connect to a server using the function
---
---   connectTo :: HostName -> PortID -> IO Handle
---
--- With the handle, you can then use handle-based IO functions
--- from 'System.IO' such as 'hPutStrLn' and 'hGetLine'.
---
--- When finished, you should close the handle explicitly
--- using
---
---   hClose :: Handle -> IO ()
---
--- Write an IO action that connects to the Example domain at
--- example.com on port 80 and sends the
--- following two lines followed by an empty line:
---
---   GET /index.html HTTP/1.1
---   Host: example.com
---
--- Then use the helper function 'hGetLines' below to
--- read the response.
-
-httpTest :: IO [String]
-httpTest = error "TODO: implement httpTest"
-
-hGetLines :: Handle -> IO [String]
-hGetLines h = do
-  l <- hGetLine h
-  if all isSpace l
-    then return []
-    else do
-      ls <- hGetLines h
-      return (l : ls)
-
--- Task IO-13.
---
--- Use the function 'bracket' from module 'Control.Exception'
--- to implement a function
---
---   withConnection :: HostName -> PortID -> (Handle -> IO r) -> IO r
---
--- in the style of 'withFile'. I.e., the handle should be closed
--- automatically at the end of the continuation or when an exception
--- occurs.
---
--- Then rewrite 'httpTest' to use 'withConnection'.
-
-withConnection :: HostName -> ServiceName -> (Handle -> IO r) -> IO r
-withConnection = error "TODO: implement withConnection"
-
-httpTest' :: IO [String]
-httpTest' = error "TODO: implement httpTest'"
-
--- Task IO-14.
---
--- Use the function 'lookupA' to perform a DNS lookup on one
--- of the seed nodes of the bitcoin network, e.g.
---
---   seed.bitcoin.sipa.be
---
--- This function is from the Network.DNS.Lookup module from the
--- dns package. The Hackage documentation contains an example
--- of how it can be used, which involves calling other functions
--- from that package as well.
---
--- To make CI tests pass, use 'googleNameServer' (provided belowe)
--- for the 'resolvInfo' field of your 'ResolvConf'. Locally, you can
--- use the default 'ResolvConf'.
-
-googleNameServer :: FileOrNumericHost
-googleNameServer = RCHostName "8.8.8.8"
-
-dnsTest :: IO (Either DNSError [IPv4])
-dnsTest = error "TODO: define dnsTest"
